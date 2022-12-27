@@ -15,6 +15,11 @@ searchAirportButton.addEventListener('click', function(){
   searchAirportInfo();
 });
 
+const searchFlightButton = document.getElementById("SearchFlightButton");
+searchFlightButton.addEventListener('click', function(){
+  printFlight();
+});
+
 
 //This function acts as the main function of the application, as it's function is to return airports from the free text search.
 export async function searchAirportInfo(city){
@@ -160,8 +165,9 @@ async function printDelays(ICAO){
   const info2 = document.createElement('p');
   info1.id = "DeparturesDelayIndex";
   info2.id = "ArrivalsDelayIndex";
-  info1.innerHTML = "Delays in departures: " + (contents.departuresDelayInformation.delayIndex).toFixed(2);
-  info2.innerHTML = "Delays in arrivals: " + (contents.arrivalsDelayInformation.delayIndex).toFixed(2);
+  const indexPosition = contents.length - 1
+  info1.innerHTML = "Delays in departures: " + (contents[indexPosition].departuresDelayInformation.delayIndex).toFixed(2);
+  info2.innerHTML = "Delays in arrivals: " + (contents[indexPosition].arrivalsDelayInformation.delayIndex).toFixed(2);
   delays.appendChild(info1);
   delays.appendChild(info2);
   let text1 = document.getElementById("DeparturesDelayIndex");

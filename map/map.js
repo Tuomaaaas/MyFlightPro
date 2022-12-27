@@ -1,3 +1,12 @@
+import {
+  getPositions,
+  getFlight
+} from '/search.js';
+
+import {
+  getICAO,
+} from '/getLocation.js';
+
 //Tiedostoa on hallinnoinut Miro Nissinen ja Tuomas Mellin
 let map = L.map('map').setView([55.22, 21.01], 4);
 let markerGroup = L.layerGroup().addTo(map);
@@ -70,5 +79,5 @@ async function changeCity(){
   const hakuteksti = document.getElementById("hakuteksti").value;
   const icao = await getICAO(hakuteksti);
   markerGroup.clearLayers();
-  getFlightInfo(icao);
+  await getFlightInfo(icao);
 }

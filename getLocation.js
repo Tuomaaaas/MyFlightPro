@@ -1,5 +1,12 @@
 import { getAirport } from './search.js';
-import { printArrDep } from './PrintInfo.js';
+import {printArrDep, searchAirportInfo} from './PrintInfo.js';
+
+//Defining all of the buttons
+const searchAirportButton = document.getElementById("SearchWithLocationButton");
+searchAirportButton.addEventListener('click', function(){
+  printLocation();
+});
+
 
 //This function returns an array including info about your location from your IP-address. -Tuomas
 async function getLocation() {
@@ -27,7 +34,7 @@ async function printLocation(){
 }
 
 //This function returns the ICAO code of the city's main airport. The city is given to the function as a parameter. -Tuomas
-async function getICAO(city){
+export async function getICAO(city){
   if (city === undefined) {
     const location = await getLocation();
     city = location.city;

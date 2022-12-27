@@ -19,16 +19,17 @@ export async function getAirport(city) {
 export async function getFlight(number, callsign) {
   let url;
   if (number === undefined){
-    const lentohakuteksti = document.getElementById("lentohakuteksti").value;
-    url = URLS.urlFlightNumber + lentohakuteksti + "/"; //is the / really required??
+    const searchField = document.getElementById("SearchFlightText").value;
+    url = URLS.urlFlightNumber + searchField;
   } else if (number !== undefined){
+    number = number.replace(/\s+/g, '');
     if (callsign === 0) {
-      url = URLS.urlFlightNumber + number + "/"; //is the / really required??
+      url = URLS.urlFlightNumber + number;
     } else {
-      url = URLS.urlFlightCallsign + number + "/"; //is the / really required??
+      url = URLS.urlFlightCallsign + number;
     }
   }
-  const contains = await fetch(url + getDate(), AeroDatabox);
+  const contains = await fetch(url + "/" + Date.getCurrentDate(), AeroDatabox());
   const result = await contains.json();
   return result;
 }
@@ -39,7 +40,7 @@ export async function getPicture(registeration){
     try {
       const contains = await fetch(
           URLS.urlAirplanePicture + registeration +
-          '/image/beta', AeroDatabox)
+          '/image/beta', AeroDatabox())
       let result = await contains.json();
       result = result.url;
       return result;
@@ -60,7 +61,7 @@ export async function getArrDep(ICAO){
 
 //This function returns and array containing info about the delays of the specific airport. -Tuomas
 export async function getDelays(ICAO){
-  const contains = await fetch(URLS.urlDelaysICAO + ICAO + '/delays', AeroDatabox());
+  const contains = await fetch(URLS.urlDelaysICAO + ICAO + '/delays/2022-12-27T15:00/2022-12-27T17:00', AeroDatabox());
   const result = await contains.json();
   return result;
 }

@@ -16,30 +16,42 @@ export async function getAirport(city) {
 }
 
 //This function returns an array containing a specific flight, searched by the user. -Tuomas
-export async function getFlight(number, callsign) {
-  let url;
-  if (number === undefined){
+export async function getFlight(flightNumber, flightCallsign) {
+  let result;
+  if (flightNumber === undefined && flightCallsign === undefined) {
     const searchField = document.getElementById("SearchFlightText").value;
-    url = URLS.urlFlightNumber + searchField;
-  } else if (number !== undefined){
-    number = number.replace(/\s+/g, '');
-    if (callsign === 0) {
-      url = URLS.urlFlightNumber + number;
-    } else {
-      url = URLS.urlFlightCallsign + number;
+    let url = URLS.urlFlightNumber + searchField;
+    result = await getFlightInfo(url);
+    if (result.length === 0){
+      url = URLS.urlFlightCallsign + searchField;
+      result = await getFlightInfo(url);
+    }
+    return result;
+  } else if (flightNumber !== undefined && flightCallsign === undefined){
+    flightNumber = flightNumber.replace(' ', '');
+    let url = URLS.urlFlightNumber + flightNumber;
+    return await getFlightInfo(url);
+  } else if (flightNumber === undefined && flightCallsign !== undefined){
+    let url = URLS.urlFlightCallsign + flightCallsign;
+    return await getFlightInfo(url);
+  }
+  async function getFlightInfo(url) {
+    try {
+      const contains = await fetch(url, AeroDatabox());
+      const result = await contains.json();
+      return result;
+    } catch (error) {
+      return "";
     }
   }
-  const contains = await fetch(url + "/" + Date.getCurrentDate(), AeroDatabox());
-  const result = await contains.json();
-  return result;
 }
 
 //This function searches for the specific aircraft picture, by the registeration number which it gets as a parameter. -Tuomas
-export async function getPicture(registeration){
-  if (registeration !== undefined) {
+export async function getPicture(registration){
+  if (registration !== undefined) {
     try {
       const contains = await fetch(
-          URLS.urlAirplanePicture + registeration +
+          URLS.urlAirplanePicture + registration +
           '/image/beta', AeroDatabox())
       let result = await contains.json();
       result = result.url;

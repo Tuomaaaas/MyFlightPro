@@ -11,15 +11,18 @@ import * as Date from './Date.js'
 
 //Defining all of the buttons
 const searchAirportButton = document.getElementById("searchAirportButton");
-searchAirportButton.addEventListener('click', function(){
-  searchAirportInfo();
-});
+if (searchAirportButton !== null) {
+  searchAirportButton.addEventListener('click', function() {
+    searchAirportInfo();
+  })
+}
 
 const searchFlightButton = document.getElementById("SearchFlightButton");
-searchFlightButton.addEventListener('click', function(){
-  printFlight();
-});
-
+if (searchFlightButton !== null) {
+  searchFlightButton.addEventListener('click', function() {
+    printFlight();
+  });
+}
 
 //This function acts as the main function of the application, as it's function is to return airports from the free text search.
 export async function searchAirportInfo(city){
@@ -102,9 +105,10 @@ export async function printArrDep(ICAO, airportName){
 }
 
 //This function prints out detailed flight information of the called flight. -Tuomas
-async function printFlight(number) {
-  let airportArray = [];
-  const contents = await getFlight(number, 0);
+async function printFlight() {
+  //Is this airport array really necessary??
+  //let airportArray = [];
+  const contents = await getFlight();
   if (contents.length > 0) {
     const article = document.getElementById('Info');
     let departureTime = Date.getTime(contents[0].departure.scheduledTimeLocal);
@@ -120,8 +124,7 @@ async function printFlight(number) {
         contents[0].departure.airport.name;
     info3.innerHTML = "Arrival: " + arrivalTime + " | " +
         contents[0].arrival.airport.name;
-    airportArray.push(
-        [departureTime + " | " + contents[0].arrival.airport.name + '<br>']);
+    //airportArray.push([departureTime + " | " + contents[0].arrival.airport.name + '<br>']);
     if (contents[0].aircraft === undefined) {
       info4.innerHTML = "Operator: " + contents[0].airline.name
     } else {

@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="map.css" />
     <script src="leaflet.js"></script>
 </head>
-<body onload="getFlightInfo()">
-<input id="hakuteksti" type="text" placeholder="Hae esitettäviä lentoja kaupungin nimellä, Esim. 'Helsinki'">
-<button onclick="getFlights()" id="getFlights">Hae!</button>
+<body>
+<input id="searchCityAirportText" type="text" placeholder="Hae esitettäviä lentoja kaupungin nimellä, Esim. 'Helsinki'">
+<button id="searchCityAirportButton">Hae!</button>
 <br>
 <br>
 <div id='map'></div>
-</body>
 <script type="module" src="map.js"></script>
+</body>
 </html>

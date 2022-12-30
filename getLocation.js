@@ -3,10 +3,11 @@ import {printArrDep, searchAirportInfo} from './PrintInfo.js';
 
 //Defining all of the buttons
 const searchAirportButton = document.getElementById("SearchWithLocationButton");
-searchAirportButton.addEventListener('click', function(){
-  printLocation();
-});
-
+if (searchAirportButton !== null) {
+  searchAirportButton.addEventListener('click', function() {
+    printLocation();
+  });
+}
 
 //This function returns an array including info about your location from your IP-address. -Tuomas
 async function getLocation() {

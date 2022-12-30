@@ -1,6 +1,8 @@
 import { AeroDatabox } from './API_keys.js';
 import { URLS } from './URL.js';
-import * as Date from './Date.js';
+import * as date from './Date.js';
+import {getLocalStorageItem, setLocalStorageItem} from './Cache.js';
+
 //This function returns an array of airports that meets the requirements of the text given from the free text search. -Tuomas
 export async function getAirport(city) {
   let url;
@@ -64,10 +66,15 @@ export async function getPicture(registration){
 
 //This function returns an array containing all of the arriving and departing aircrafts from the specific airport in a timescale of this moment to and hour forwards. -Tuomas
 export async function getArrDep(ICAO){
-  let endtime = Date.getNextHourDateAndTime();
-  const starttime = Date.getCurrentDate() + "T" + Date.getCurrentTime();
+  const cache = getLocalStorageItem(ICAO);
+  if (cache !== null){
+    return cache;
+  }
+  let endtime = date.getNextHourDateAndTime();
+  const starttime = date.getCurrentDate() + "T" + date.getCurrentTime();
   const contains = await fetch(URLS.urlFlightsICAO + ICAO + '/' + starttime + '/' + endtime + '?withCodeshared=false', AeroDatabox())
   const result = await contains.json();
+  setLocalStorageItem(ICAO, result);
   return result;
 }
 

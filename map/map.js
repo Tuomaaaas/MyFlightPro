@@ -40,10 +40,8 @@ L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=KCZTrF8TT
 
 //This function draws the markers to the map. -Miro
 async function addToMap (lat, lon, direction, callsign, ICAO) {
-  //let marker = L.marker([lat, lon]).addTo(markerGroup);
   let marker = L.marker([lat, lon]).addTo(markerGroup).on('click', await printFlightInfo(direction, callsign, ICAO));
   marker.bindPopup('<strong>' + FlightInfo.flightNumber + '</strong></br>'+ '<strong>' + "Operator: " + '</strong>' + FlightInfo.operator + '</br>' + '<strong>' + "Heading: " + '</strong>' + FlightInfo.heading + '</br><strong>' + "Altitude: " + '</strong>' + FlightInfo.altitude + '</br><strong>' + "Departure: " + '</strong>' + FlightInfo.departureAirport + '</br><strong>' + "Arrival: " + '</strong>' + FlightInfo.arrivalAirport + '</br><strong>' + "Status: " + '</strong>' + FlightInfo.flightStatus);
-  //marker.bindPopup(FlightInfo.heading);
 }
 
 //This function prints out the active flights from the API to the livemap. -Tuomas
@@ -51,8 +49,17 @@ async function getFlightsPosition(ICAO){
   if (ICAO === undefined) {
     ICAO = await getICAO();
   }
-  const departures = await getPositions(ICAO, "Departures");
-  const arrivals = await getPositions(ICAO, "Arrivals");
+
+  let departures;
+  let arrivals;
+
+  departures = await getPositions(ICAO, "Departures");
+  arrivals = await getPositions(ICAO, "Arrivals");
+  const flights = {
+    dep: departures,
+    arr: arrivals
+  }
+
   for (let i = 0; i<departures.length; i++){
     const latitude = departures[i][0];
     const longitude = departures[i][1];
@@ -67,11 +74,7 @@ async function getFlightsPosition(ICAO){
 
     await addToMap(latitude, longitude, "arr", callsign, ICAO);
   }
-  const flights = {
-    dep: departures,
-    arr: arrivals
-  };
-  setLocalStorageItem(ICAO, flights);
+  setLocalStorageItem(ICAO + "_map", flights);
 }
 
 async function printFlightInfo(direction, callsign, ICAO){
@@ -80,8 +83,7 @@ async function printFlightInfo(direction, callsign, ICAO){
   }
 
   //from AirLabs
-  let positionInfoCache = getLocalStorageItem(ICAO);
-  console.log(positionInfoCache);
+  let positionInfoCache = getLocalStorageItem(ICAO + "_map");
   if (positionInfoCache === null){
     } else {
     switch (direction){
@@ -115,6 +117,8 @@ async function printFlightInfo(direction, callsign, ICAO){
   const flightInfoCache = getLocalStorageItem(callsign);
   if (flightInfoCache === null) {
     result = await getFlight(undefined, callsign);
+    setLocalStorageItem(callsign, result);
+    setLocalStorageItem(FlightInfo.flightNumber, result);
   } else {
     result = flightInfoCache;
   }
@@ -128,8 +132,20 @@ async function printFlightInfo(direction, callsign, ICAO){
 
 //This function is called, when the user searched for a city/airport from the free text search. It clears the map from the markers and then gets the new city's airports ICAO code. -Tuomas
 async function changeCity(){
+  let icao;
   const searchField = document.getElementById("searchCityAirportText").value;
-  const icao = await getICAO(searchField);
+  const cache = getLocalStorageItem(searchField);
+  if (cache === null) {
+    icao = await getICAO(searchField);
+    if (icao.length !== 0){
+      setLocalStorageItem(searchField, icao);
+    }
+  } else {
+    icao = cache;
+  }
+  if (icao === null){
+    return null;
+  }
   markerGroup.clearLayers();
   await getFlightsPosition(icao);
 }
